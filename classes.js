@@ -1,5 +1,5 @@
 module.exports = {
-	card: class Card {
+	card: class {
 		constructor(name, type, attack, fortitude, rarity) {
 			this.name = name;
 			this.type = type;
@@ -11,7 +11,7 @@ module.exports = {
 		}
 	},
 
-	deck: class Deck {
+	deck: class {
 		constructor(cards) {
 			this.stash = cards;
 			this.hand = null;
@@ -19,7 +19,7 @@ module.exports = {
 		}
 	},
 
-	board: class Board {
+	board: class {
 		constructor(decks) {
 			this.decks = decks;
 		}
@@ -27,6 +27,4 @@ module.exports = {
 
 	type: ['water', 'earth', 'fire', 'air'],
 	rarity: ['common', 'uncommon', 'rare', 'ultra-rare', 'legendary', 'god tier', 'singleton']
-
-
 };

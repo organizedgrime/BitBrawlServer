@@ -25,7 +25,7 @@ io.on('connection', function(client) {
 
 
 		// // Info sent to the local server
-  //       client.emit('broad', data.username + ":" + data.password);
+        //client.emit('broad', data.username + ":" + data.password);
 
   //       // Info sent directly to the other computer
   //       client.broadcast.emit('broad', data.username + ":" + data.password);
