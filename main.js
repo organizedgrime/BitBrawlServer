@@ -12,19 +12,23 @@ app.get('/', function(req, res,next) {
 });
 
 io.on('connection', function(client) {
-    console.log('Client connected...');
-    var x = new classes.card('Gorgonzo', classes.type[0], 100, 90, classes.rarity[3]);
-
+    // Accept join from client and log client connection message
     client.on('join', function(data) {
     	console.log(data);
 	});
 
-	client.on('messages', function(data) {
-		// Info sent to the local server
-        client.emit('broad', data+"side1" + x);
+    // Receive the message from the client, send it back to both clients
+	client.on('login', function(data) {
+        /*
+        Check the credentials of the user, query the blockchain, and store their cards in a deck object.
+        */
 
-        // Info sent directly to the other computer
-        client.broadcast.emit('broad', data+"side2");
+
+		// // Info sent to the local server
+  //       client.emit('broad', data.username + ":" + data.password);
+
+  //       // Info sent directly to the other computer
+  //       client.broadcast.emit('broad', data.username + ":" + data.password);
     });
 });
 

@@ -6,28 +6,37 @@
         <h1>Cards</h1>
         <div id="future"></div>
         <div id="cards"></div>
+
         <form id="form" id="chat_form">
-            <input id="chat_input" type="text">
+            <!-- Credentials for accessing BitBrawls account. -->
+            <input id="username" type="text">
+            <input id="password" type="password">
             <input type="submit" value="Send">
         </form>
+
         <script src="/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
 
         <script>  
+            // Open connection with server
             var socket = io.connect('http://192.168.43.238:4200');
             socket.on('connect', function(data) {
                 socket.emit('join', '<client connected>');
             });
 
+            // Receive message from server
             socket.on('broad', function(data, card) {
                 $('#future').append(data+ "<br/>");
                 $('#cards').append(card);
             });
 
+            // Send message to server
             $('form').submit(function(e){
                 e.preventDefault();
-                var message = $('#chat_input').val();
-                socket.emit('messages', message);
+                socket.emit('login', {
+                    username: $('#username').val(),  
+                    password: $('#password').val()
+                });
             });
         </script> 
     </body>
