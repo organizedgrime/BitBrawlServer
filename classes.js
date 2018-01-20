@@ -11,6 +11,10 @@ module.exports = {
 			this.toString = function() { 
 				return this.name + ":" + this.type + ":" + this.attack + ":" + this.fortitude + ":" + this.rarity + "<br>";
 			};
+
+			this.copy = function() {
+				return new this.constructor(this.id+1, this.name, this.type, this.attack, this.fortitude, this.rarity);
+			}
 		}
 	},
 
@@ -51,6 +55,16 @@ module.exports = {
 				str += "DECK 2<br>" + deck2.toString() + "<br>";
 				return str;
 			}
+		}
+	},
+
+	clientWorld: class {
+		constructor(board, p1) {
+			this.myHand = p1 ? board.deck1.hand : board.deck2.hand;
+			this.myPlay = p1 ? board.deck1.play : board.deck2.play;
+			this.enemyPlay = p1 ? board.deck2.play : board.deck1.play;
+			this.myStashSize = p1 ? board.deck1.stash.length : board.deck2.stash.length;
+			this.winner = -1;
 		}
 	},
 

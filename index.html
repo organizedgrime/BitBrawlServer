@@ -22,7 +22,8 @@
 
             // Receive message from server
             socket.on('update', function(data) {
-                $('#info').html(data);
+                //$('#info').html(data);
+                console.log(data);
             });
 
             // Send message to server

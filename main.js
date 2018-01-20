@@ -5,19 +5,27 @@ var app = express();
 var server = require('http').createServer(app);  
 var io = require('socket.io')(server);
 
-// set up mock deck
-var cards = [
-    new classes.card(0, 'earthworm', classes.type[1], 0.5, 2, classes.rarity[0]),
-    new classes.card(1, 'carp', classes.type[0], 0.25, 3, classes.rarity[0]),
-    new classes.card(2, 'sparrow', classes.type[3], 0.5, 2, classes.rarity[0]),
-    new classes.card(3, 'inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6])          
-];
-
-var p1cards = new classes.deck([cards[0], cards[1]]), 
-    p2cards = new classes.deck([cards[2], cards[3]]);
-
+//region board setup start
+var cards = [];
+var copycard = new classes.card(0, 'inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6]);
+for(var i = 0; i < 20; i++) {
+    cards.push(copycard);
+    copycard = copycard.copy();
+}
+var p1cards = new classes.deck(cards.slice(0, cards.length/2)), 
+    p2cards = new classes.deck(cards.slice(cards.length/2, cards.length));
 var board = new classes.board(p1cards, p2cards);
-//console.log(board.toString());
+// board setup end
+
+
+var drawCard = function(p1) {
+    if(p1 == true) {
+        board.deck1.hand = board.deck1.hand.concat(board.deck1.stash.splice(Math.random() * board.deck1.stash.length, 1));
+    }
+    else if(p1 == false) {
+        board.deck2.hand = board.deck2.hand.concat(board.deck2.stash.splice(Math.random() * board.deck2.stash.length, 1));
+    }
+}
 
 // set stuff up
 app.use(express.static(__dirname + '/node_modules'));  
@@ -31,6 +39,7 @@ io.on('connection', function(client) {
     var address = client.handshake.address;
     console.log('<client joined at ' + address + '>');
 
+    // Establish players based on IP.
     if(!pOneIP) {
         pOneIP = address;
     }
@@ -39,14 +48,7 @@ io.on('connection', function(client) {
     }
 
     client.on('update', function(data) {
-        if(address == pOneIP) {
-            // Display all information pertinent to Player 1
-            client.emit('update', board.deck1.toString());
-        }
-        else {
-            // Display all information pertinent to Player 2
-            client.emit('update', board.deck2.toString());
-        }
+         client.emit('update', new classes.clientWorld(board, address == pOneIP));
     });
 
     client.on('playcard', function(cardID) {
