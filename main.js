@@ -6,26 +6,17 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 // set up mock deck
-var p1cards = [], p2cards = [];
-for(var i = 0; i < 10; i++) {
-    var card = new classes.card(
-        Math.random().toString(36).substring(7), 
-        classes.type[Math.round(Math.random() * 3)], 
-        Math.round(Math.random() * 100), Math.round(Math.random() * 100), 
-        classes.rarity[Math.round(Math.random() * 5)]
-    );
-    p1cards.push(card);
+var cards = [
+    new classes.card('earthworm', classes.type[1], 0.5, 2, classes.rarity[0]),
+    new classes.card('carp', classes.type[0], 0.25, 3, classes.rarity[0]),
+    new classes.card('sparrow', classes.type[3], 0.5, 2, classes.rarity[0]),
+    new classes.card('inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6])          
+];
 
-    var card2 = new classes.card(
-        Math.random().toString(36).substring(7), 
-        classes.type[Math.round(Math.random() * 3)], 
-        Math.round(Math.random() * 100), Math.round(Math.random() * 100), 
-        classes.rarity[Math.round(Math.random() * 5)]
-    );
-    p2cards.push(card2);
-}
+var p1cards = new classes.deck([cards[0], cards[1]]), 
+    p2cards = new classes.deck([cards[2], cards[3]]);
 
-var board = new classes.board({deck1: p1cards, deck2: p2cards});
+var board = new classes.board(p1cards, p2cards);
 //console.log(board.toString());
 
 // set stuff up
@@ -50,16 +41,31 @@ io.on('connection', function(client) {
         console.log('data' + data.username);
         if(data.username == 'p1') {
             client.emit('broad', p1cards.toString());
+            client.broadcast.emit('broad', 'the other player had drawn their deck');
         }
         else if(data.username == 'p2') {
             client.emit('broad', p2cards.toString());
+            client.broadcast.emit('broad', 'the other player had drawn their deck');
         }
         else {
             client.emit('broad', 'user not recognized');
         }
+    });
 
-  //       // Info sent directly to the other computer
-       client.broadcast.emit('broad', data.username);
+
+    client.on('update', function(data) {
+        if(data.username == 'p1') {
+            // Display all information pertinent to Player 1
+            client.emit('update', board.deck1.toString());
+        }
+        else if(data.username == 'p2') {
+            // Display all information pertinent to Player 2
+            client.emit('update', board.deck2.toString());
+        }
+        else {
+            // Display error
+            client.emit('update', 'cannot retrieve deck, invalid user.');
+        }
     });
 });
 

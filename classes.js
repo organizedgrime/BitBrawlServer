@@ -16,13 +16,23 @@ module.exports = {
 	deck: class {
 		constructor(cards) {
 			this.stash = cards;
-			this.hand = null;
-			this.play = null;
+			this.hand = [];
+			this.play = [];
 
 			this.toString = function() {
-				var str = "";
-				for(var i = 0; i < stash.length; i++) {
-					str += stash[i].toString();
+				var str = "<b>Stash:</b><br>";
+				for(var i = 0; i < this.stash.length; i++) {
+					str += this.stash[i].toString();
+				}
+
+				str += '<br><b>Hand:</b><br>';
+				for(var i = 0; i < this.hand.length; i++) {
+					str += this.hand[i].toString();
+				}
+
+				str += '<br><b>Play:</b><br>';
+				for(var i = 0; i < this.play.length; i++) {
+					str += this.hand[i].toString();
 				}
 				return str;
 			};
@@ -30,13 +40,14 @@ module.exports = {
 	},
 
 	board: class {
-		constructor(decks) {
-			this.decks = decks;
+		constructor(deck1, deck2) {
+			this.deck1 = deck1;
+			this.deck2 = deck2;			
 
 			this.toString = function() {
 				var str = "";
-				str += "DECK 1<br>" + decks.deck1.toString() + "<br>";
-				str += "DECK 2<br>" + decks.deck2.toString() + "<br>";
+				str += "DECK 1<br>" + deck1.toString() + "<br>";
+				str += "DECK 2<br>" + deck2.toString() + "<br>";
 				return str;
 			}
 		}
