@@ -1,6 +1,7 @@
 module.exports = {
 	card: class {
-		constructor(name, type, attack, fortitude, rarity) {
+		constructor(id, name, type, attack, fortitude, rarity) {
+			this.id = id;
 			this.name = name;
 			this.type = type;
 			this.attack = attack;

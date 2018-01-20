@@ -7,10 +7,10 @@ var io = require('socket.io')(server);
 
 // set up mock deck
 var cards = [
-    new classes.card('earthworm', classes.type[1], 0.5, 2, classes.rarity[0]),
-    new classes.card('carp', classes.type[0], 0.25, 3, classes.rarity[0]),
-    new classes.card('sparrow', classes.type[3], 0.5, 2, classes.rarity[0]),
-    new classes.card('inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6])          
+    new classes.card(0, 'earthworm', classes.type[1], 0.5, 2, classes.rarity[0]),
+    new classes.card(1, 'carp', classes.type[0], 0.25, 3, classes.rarity[0]),
+    new classes.card(2, 'sparrow', classes.type[3], 0.5, 2, classes.rarity[0]),
+    new classes.card(3, 'inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6])          
 ];
 
 var p1cards = new classes.deck([cards[0], cards[1]]), 
@@ -25,46 +25,36 @@ app.get('/', function(req, res,next) {
     res.sendFile(__dirname + '/index.html');
 });
 
+var pOneIP, pTwoIP;
+
 io.on('connection', function(client) {
-    // Accept join from client and log client connection message
-    client.on('join', function(data) {
-    	console.log(data);
-	});
+    var address = client.handshake.address;
+    console.log('<client joined at ' + address + '>');
 
-    // Receive the message from the client, send it back to both clients
-	client.on('login', function(data) {
-        /*
-        Check the credentials of the user, query the blockchain, and store their cards in a deck object.
-        */
-
-		// // Info sent to the local server
-        console.log('data' + data.username);
-        if(data.username == 'p1') {
-            client.emit('broad', p1cards.toString());
-            client.broadcast.emit('broad', 'the other player had drawn their deck');
-        }
-        else if(data.username == 'p2') {
-            client.emit('broad', p2cards.toString());
-            client.broadcast.emit('broad', 'the other player had drawn their deck');
-        }
-        else {
-            client.emit('broad', 'user not recognized');
-        }
-    });
-
+    if(!pOneIP) {
+        pOneIP = address;
+    }
+    else {
+        pTwoIP = address;
+    }
 
     client.on('update', function(data) {
-        if(data.username == 'p1') {
+        if(address == pOneIP) {
             // Display all information pertinent to Player 1
             client.emit('update', board.deck1.toString());
         }
-        else if(data.username == 'p2') {
+        else {
             // Display all information pertinent to Player 2
             client.emit('update', board.deck2.toString());
         }
+    });
+
+    client.on('playcard', function(cardID) {
+        if(address == pOneIP) {
+            // Player one playcard
+        }
         else {
-            // Display error
-            client.emit('update', 'cannot retrieve deck, invalid user.');
+            // Player two playcard
         }
     });
 });

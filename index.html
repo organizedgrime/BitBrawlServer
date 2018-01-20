@@ -19,9 +19,6 @@
         <script>  
             // Open connection with server
             var socket = io.connect('http://192.168.43.238:4200');
-            socket.on('connect', function(data) {
-                socket.emit('join', '<client connected>');
-            });
 
             // Receive message from server
             socket.on('update', function(data) {
@@ -31,9 +28,7 @@
             // Send message to server
             $('form').submit(function(e){
                 e.preventDefault();
-                socket.emit('update', {
-                    username: $('#username').val()
-                });
+                socket.emit('update', {});
             });
         </script> 
     </body>
