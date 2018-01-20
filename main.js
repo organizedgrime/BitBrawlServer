@@ -18,14 +18,7 @@ var board = new classes.board(p1cards, p2cards);
 // board setup end
 
 
-var drawCard = function(p1) {
-    if(p1 == true) {
-        board.deck1.hand = board.deck1.hand.concat(board.deck1.stash.splice(Math.random() * board.deck1.stash.length, 1));
-    }
-    else if(p1 == false) {
-        board.deck2.hand = board.deck2.hand.concat(board.deck2.stash.splice(Math.random() * board.deck2.stash.length, 1));
-    }
-}
+
 
 // set stuff up
 app.use(express.static(__dirname + '/node_modules'));  
@@ -39,6 +32,11 @@ io.on('connection', function(client) {
     var address = client.handshake.address;
     console.log('<client joined at ' + address + '>');
 
+    var updateFunc = function(data) {
+        client.emit('update', new classes.clientWorld(board, address == pOneIP));
+        client.broadcast.emit('update', new classes.clientWorld(board, address != pOneIP));
+    };
+
     // Establish players based on IP.
     if(!pOneIP) {
         pOneIP = address;
@@ -47,9 +45,7 @@ io.on('connection', function(client) {
         pTwoIP = address;
     }
 
-    client.on('update', function(data) {
-         client.emit('update', new classes.clientWorld(board, address == pOneIP));
-    });
+    client.on('update', updateFunc);
 
     client.on('playcard', function(cardID) {
         if(address == pOneIP) {
@@ -57,6 +53,19 @@ io.on('connection', function(client) {
         }
         else {
             // Player two playcard
+        }
+    });
+
+    client.on('drawcard', function() {
+        if(address == pOneIP) {
+            // Player one playcard
+            board.deck1.drawCard();
+            updateFunc();
+        }
+        else {
+            // Player two playcard
+            board.deck2.drawCard();
+            updateFunc();
         }
     });
 });

@@ -41,6 +41,10 @@ module.exports = {
 				}
 				return str;
 			};
+
+			this.drawCard = function() {
+				this.hand = this.hand.concat(this.stash.splice(Math.random() * this.stash.length, 1));
+			};
 		}
 	},
 
