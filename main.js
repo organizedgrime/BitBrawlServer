@@ -26,7 +26,7 @@ for(var i = 0; i < 10; i++) {
 }
 
 var board = new classes.board({deck1: p1cards, deck2: p2cards});
-console.log(board.toString());
+//console.log(board.toString());
 
 // set stuff up
 app.use(express.static(__dirname + '/node_modules'));  
@@ -46,12 +46,20 @@ io.on('connection', function(client) {
         Check the credentials of the user, query the blockchain, and store their cards in a deck object.
         */
 
-
 		// // Info sent to the local server
-        //client.emit('broad', data.username + ":" + data.password);
+        console.log('data' + data.username);
+        if(data.username == 'p1') {
+            client.emit('broad', p1cards.toString());
+        }
+        else if(data.username == 'p2') {
+            client.emit('broad', p2cards.toString());
+        }
+        else {
+            client.emit('broad', 'user not recognized');
+        }
 
   //       // Info sent directly to the other computer
-  //       client.broadcast.emit('broad', data.username + ":" + data.password);
+       client.broadcast.emit('broad', data.username);
     });
 });
 

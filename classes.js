@@ -8,7 +8,7 @@ module.exports = {
 			this.rarity = rarity;
 
 			this.toString = function() { 
-				return this.name + ":" + this.type + ":" + this.attack + ":" + this.fortitude + ":" + this.rarity + "\n";
+				return this.name + ":" + this.type + ":" + this.attack + ":" + this.fortitude + ":" + this.rarity + "<br>";
 			};
 		}
 	},
@@ -35,8 +35,8 @@ module.exports = {
 
 			this.toString = function() {
 				var str = "";
-				str += "DECK 1\n" + decks.deck1.toString() + "\n";
-				str += "DECK 2\n" + decks.deck2.toString() + "\n";
+				str += "DECK 1<br>" + decks.deck1.toString() + "<br>";
+				str += "DECK 2<br>" + decks.deck2.toString() + "<br>";
 				return str;
 			}
 		}

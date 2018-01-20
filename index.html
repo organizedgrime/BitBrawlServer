@@ -3,14 +3,11 @@
 
     </head>
     <body>
-        <h1>Cards</h1>
-        <div id="future"></div>
+        <h1>Request Cards</h1>
         <div id="cards"></div>
 
         <form id="form" id="chat_form">
-            <!-- Credentials for accessing BitBrawls account. -->
             <input id="username" type="text">
-            <input id="password" type="password">
             <input type="submit" value="Send">
         </form>
 
@@ -25,17 +22,17 @@
             });
 
             // Receive message from server
-            socket.on('broad', function(data, card) {
-                $('#future').append(data+ "<br/>");
-                $('#cards').append(card);
+            socket.on('broad', function(data) {
+                $('#cards').append(data + '<br>');
             });
+
 
             // Send message to server
             $('form').submit(function(e){
+
                 e.preventDefault();
                 socket.emit('login', {
-                    username: $('#username').val(),  
-                    password: $('#password').val()
+                    username: $('#username').val()
                 });
             });
         </script> 
