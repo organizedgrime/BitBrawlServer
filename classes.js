@@ -49,7 +49,11 @@ module.exports = {
 			this.playCard = function(card) {
 				// Play the card
 				if(this.play.length < 4) {
-					this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
+					for(var i = this.hand.length - 1; i >= 0; i--) {
+						if(this.hand[i].id == card.id) {
+							this.play = this.play.concat(this.hand.splice(i, 1));
+						}
+					}
 					this.drawCard();
 				}
 			};
@@ -110,6 +114,7 @@ module.exports = {
 			this.myPlay = p1 ? board.deck1.play : board.deck2.play;
 			this.enemyPlay = p1 ? board.deck2.play : board.deck1.play;
 			this.myStashSize = p1 ? board.deck1.stash.length : board.deck2.stash.length;
+			this.enemyStashSize = p1 ? board.deck2.stash.length : board.deck1.stash.length;
 			this.winner = winner;
 			this.myturn = myturn;
 		}

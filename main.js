@@ -7,11 +7,10 @@ var io = require('socket.io')(server);
 
 //region board setup start
 var cards = [];
-var copycard = new classes.card(0, 'tiger', classes.type[1], 1, 5, classes.rarity[6]);
+var cardnames = ['carp', 'dragon', 'eagle', 'earthworm', 'electriceel', 'halpt', 'hippo', 'jelly', 'mouse', 'octo', 'rhino', 'sparrow', 'tiger', 'tortoise', 'wasp'];
 var decksize = 10;
 for(var i = 0; i < decksize*2; i++) {
-    cards.push(copycard);
-    copycard = copycard.copy();
+    cards.push(new classes.card(i, cardnames[Math.round(Math.random() * (cardnames.length-1))], classes.type[1], 1, 5, classes.rarity[0]));
 }
 var p1cards = new classes.deck(cards.slice(0, cards.length/2)), 
     p2cards = new classes.deck(cards.slice(cards.length/2, cards.length));
@@ -67,6 +66,8 @@ io.on('connection', function(socket) {
     }
 
     var update = function() {
+        checkwin();
+
         // Distribute the relevant game information to both players
         if(playerone)
             io.to(playerone.id).emit('update', new classes.clientWorld(board, true, winner, round % 2 == 0));
@@ -92,10 +93,10 @@ io.on('connection', function(socket) {
     socket.on('playcard', function(card) {
         board.fortFall();
         if(socket.id == playerone.id) {
-            board.deck1.playCard();
+            board.deck1.playCard(card);
         }
         else {
-            board.deck2.playCard();
+            board.deck2.playCard(card);
         }
         round++;
         update();
