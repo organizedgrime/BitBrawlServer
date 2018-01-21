@@ -7,7 +7,7 @@ var io = require('socket.io')(server);
 
 //region board setup start
 var cards = [];
-var copycard = new classes.card(0, 'inert aluminum cube', classes.type[1], 0.5, 5, classes.rarity[6]);
+var copycard = new classes.card(0, 'tiger', classes.type[1], 0.5, 5, classes.rarity[6]);
 var decksize = 10;
 for(var i = 0; i < decksize*2; i++) {
     cards.push(copycard);
@@ -19,6 +19,7 @@ var board = new classes.board(p1cards, p2cards);
 // board setup end
 
 // set server stuff up
+app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/public'));
 app.get('/', function(req, res, next) {
     res.sendFile(__dirname + '/index.html');
