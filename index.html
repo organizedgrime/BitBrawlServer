@@ -15,23 +15,12 @@
 
         <script src="/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="/truffle-contract/dist/truffle-contract.js"></script>
+        <script src="app.js"></script>
+
 
         <script>  
-            // Open connection with server
-            var socket = io.connect('http://192.168.43.238:4200');
-
-            // Receive message from server
-            socket.on('update', function(data) {
-                console.log(data);
-            });
-
-            // Send message to server
-            $('form').submit(function(e){
-                e.preventDefault();
-                socket.emit('update', {});
-            });
-
-            console.log(web3);
+            onLoad();
         </script> 
     </body>
 </html>  

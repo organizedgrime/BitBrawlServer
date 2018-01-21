@@ -5,6 +5,9 @@ var app = express();
 var server = require('http').createServer(app);  
 var io = require('socket.io')(server);
 
+var Web3 = require('Web3');
+var trufflecontract = require('truffle-contract');
+
 //region board setup start
 var cards = [];
 var cardnames = ['carp', 'dragon', 'eagle', 'earthworm', 'electriceel', 'halpt', 'hippo', 'jelly', 'mouse', 'octo', 'rhino', 'sparrow', 'tiger', 'tortoise', 'wasp'];
@@ -29,7 +32,7 @@ var cardtypes = [
 var decksize = 10;
 for(var i = 0; i < decksize*2; i++) {
     var index = Math.round(Math.random() * (cardnames.length-1));
-    cards.push(new classes.card(i, cardnames[index], cardtypes[index], 1, 5, classes.rarity[0]));
+    cards.push(new classes.card(i, cardnames[index], cardtypes[index], Math.round((Math.random() * 7) + 1), Math.round((Math.random() * 10) + 5), classes.rarity[0]));
 }
 var p1cards = new classes.deck(cards.slice(0, cards.length/2)), 
     p2cards = new classes.deck(cards.slice(cards.length/2, cards.length));
