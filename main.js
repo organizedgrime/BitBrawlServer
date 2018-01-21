@@ -17,56 +17,66 @@ var p1cards = new classes.deck(cards.slice(0, cards.length/2)),
 var board = new classes.board(p1cards, p2cards);
 // board setup end
 
-
-
-
-// set stuff up
+// set server stuff up
 app.use(express.static(__dirname + '/node_modules'));  
 app.get('/', function(req, res,next) {
     res.sendFile(__dirname + '/index.html');
 });
 
-var pOneIP, pTwoIP;
+var playerone = null;
+var playertwo = null;
 
-io.on('connection', function(client) {
-    var address = client.handshake.address;
-    console.log('<client joined at ' + address + '>');
-
-    var updateFunc = function(data) {
-        client.emit('update', new classes.clientWorld(board, address == pOneIP));
-        client.broadcast.emit('update', new classes.clientWorld(board, address != pOneIP));
-    };
+io.on('connection', function(socket) {
+    var address = socket.handshake.address;
+    console.log('<socket joined at ' + address + '>');
 
     // Establish players based on IP.
-    if(!pOneIP) {
-        pOneIP = address;
+    if(!playerone) {
+        // It's player one logging on for the first time.
+        playerone = {ip: address, id: socket.id};
+    }
+    else if(!playertwo) {
+        // It's player two logging on for the first time.
+        playertwo = {ip: address, id: socket.id};
     }
     else {
-        pTwoIP = address;
+        if(playerone.ip == address) {
+            // It's player one logging on again.
+            playerone.id = socket.id;
+        }
+        else if(playertwo.ip == address) {
+            // It's player two logging on again.
+            playertwo.id = socket.id;
+        }
+        else {
+            // User is not part of the two IPs already saved.
+        }
     }
 
-    client.on('update', updateFunc);
+    var update = function(data) {
+        io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
+        io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
+    };
 
-    client.on('playcard', function(cardID) {
-        if(address == pOneIP) {
-            // Player one playcard
+    socket.on('update', update);
+    socket.on('playcard', function(card) {
+        if(socket.id == playerone.id) {
+            board.deck1.playCard();
         }
         else {
-            // Player two playcard
+            board.deck2.playCard();
         }
+        update();
     });
 
-    client.on('drawcard', function() {
-        if(address == pOneIP) {
-            // Player one playcard
-            board.deck1.drawCard();
-            updateFunc();
+    socket.on('attackcard', function(attacker, defender) {
+        if(socket.id == playerone.id) {
+            board.deck2.defendCard(attacker, defender);
         }
         else {
-            // Player two playcard
-            board.deck2.drawCard();
-            updateFunc();
+            board.deck1.defendCard(attacker, defender);
         }
+        update();
     });
 });
 

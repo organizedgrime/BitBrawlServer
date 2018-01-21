@@ -14,7 +14,7 @@ module.exports = {
 
 			this.copy = function() {
 				return new this.constructor(this.id+1, this.name, this.type, this.attack, this.fortitude, this.rarity);
-			}
+			};
 		}
 	},
 
@@ -45,6 +45,19 @@ module.exports = {
 			this.drawCard = function() {
 				this.hand = this.hand.concat(this.stash.splice(Math.random() * this.stash.length, 1));
 			};
+
+			this.playCard = function(card) {
+				this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
+			};
+
+			this.defendCard = function(attacker, defender) {
+				this.play[this.play.indexOf(defender)].fortitude -= attacker.attack;
+			};
+
+			// Fill the users hand for the start of the game
+			for(var i = 0; i < 4; i++) {
+				this.drawCard();
+			}
 		}
 	},
 
