@@ -7,7 +7,7 @@ var io = require('socket.io')(server);
 
 //region board setup start
 var cards = [];
-var copycard = new classes.card(0, 'tiger', classes.type[1], 0.5, 5, classes.rarity[6]);
+var copycard = new classes.card(0, 'tiger', classes.type[1], 1, 5, classes.rarity[6]);
 var decksize = 10;
 for(var i = 0; i < decksize*2; i++) {
     cards.push(copycard);
