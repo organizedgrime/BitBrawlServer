@@ -7,8 +7,9 @@ var io = require('socket.io')(server);
 
 //region board setup start
 var cards = [];
-var copycard = new classes.card(0, 'inert aluminum cube', classes.type[1], 0.5, 2, classes.rarity[6]);
-for(var i = 0; i < 20; i++) {
+var copycard = new classes.card(0, 'inert aluminum cube', classes.type[1], 0.5, 5, classes.rarity[6]);
+var decksize = 10;
+for(var i = 0; i < decksize; i++) {
     cards.push(copycard);
     copycard = copycard.copy();
 }
@@ -25,6 +26,8 @@ app.get('/', function(req, res,next) {
 
 var playerone = null;
 var playertwo = null;
+
+var round = 0;
 
 io.on('connection', function(socket) {
     var address = socket.handshake.address;
@@ -58,12 +61,29 @@ io.on('connection', function(socket) {
         }
     }
 
-    var update = function(data) {
+    var update = function() {
         if(playerone)
             io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
 
         if(playertwo)
             io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
+    };
+
+    var turn = function() {
+        round++;
+        board.fortFall();
+        update();
+    };
+
+    var checkwin = function() {
+        if(round > 2) {
+            if(board.deck1.play.length == 0){
+                console.log("p2 wins");
+            }
+            else if(board.deck2.play.length == 0) {
+                console.log("p1 wins");
+            }
+        }
     };
 
     socket.on('update', update);
@@ -74,7 +94,7 @@ io.on('connection', function(socket) {
         else {
             board.deck2.playCard();
         }
-        update();
+        turn();
     });
 
     socket.on('attackcard', function(attacker, defender) {
@@ -84,7 +104,7 @@ io.on('connection', function(socket) {
         else {
             board.deck1.defendCard(attacker, defender);
         }
-        update();
+        turn();
     });
 });
 

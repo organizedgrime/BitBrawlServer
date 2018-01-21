@@ -47,22 +47,24 @@ module.exports = {
 			};
 
 			this.playCard = function(card) {
+				// Play the card
 				this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
+
+				// Draw another card
+				this.hand = this.hand.concat(this.stash.splice(Math.round(Math.random() * this.stash.length), 1));
 			};
 
 			this.defendCard = function(attacker, defender) {
-				console.log("attacker: " + attacker.id);
-				console.log("defender: " + defender.id);
-				console.log(this.play);
-
 				for(var i = 0; i < this.play.length; i++) {
 					if(this.play[i].id == defender.id) {
 						this.play[i].fortitude -= attacker.attack;
-						console.log('whatssss gooood yo');
+
+						// Card must be discarded
+						if(this.play[i].fortitude <= 0) {
+							this.play.splice(i, 1);
+						}
 					}
 				}
-
-				//this.play[this.play.indexOf(defender)].fortitude -= attacker.attack;
 			};
 
 			// Fill the users hand for the start of the game
@@ -83,6 +85,22 @@ module.exports = {
 				str += "DECK 2<br>" + deck2.toString() + "<br>";
 				return str;
 			}
+
+			this.fortFall = function() {
+				for(var i = 0; i < deck1.play.length; i++) {
+					deck1.play[i].fortitude--;
+					if(deck1.play[i].fortitude <= 0) {
+						deck1.play.splice(i, 1);
+					}
+				}
+
+				for(var i = 0; i < deck2.play.length; i++) {
+					deck2.play[i].fortitude--;
+					if(deck2.play[i].fortitude <= 0) {
+						deck2.play.splice(i, 1);
+					}
+				}
+			};
 		}
 	},
 
