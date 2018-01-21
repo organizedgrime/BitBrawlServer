@@ -48,7 +48,10 @@ module.exports = {
 
 			this.playCard = function(card) {
 				// Play the card
-				this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
+				if(this.play.length < 4) {
+					this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
+					this.drawCard();
+				}
 			};
 
 			this.defendCard = function(attacker, defender) {
@@ -102,12 +105,13 @@ module.exports = {
 	},
 
 	clientWorld: class {
-		constructor(board, p1) {
+		constructor(board, p1, winner, myturn) {
 			this.myHand = p1 ? board.deck1.hand : board.deck2.hand;
 			this.myPlay = p1 ? board.deck1.play : board.deck2.play;
 			this.enemyPlay = p1 ? board.deck2.play : board.deck1.play;
 			this.myStashSize = p1 ? board.deck1.stash.length : board.deck2.stash.length;
-			this.winner = -1;
+			this.winner = winner;
+			this.myturn = myturn;
 		}
 	},
 

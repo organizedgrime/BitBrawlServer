@@ -27,7 +27,8 @@ app.get('/', function(req, res,next) {
 var playerone = null;
 var playertwo = null;
 
-var round = 0;
+var round = Math.round(Math.random());
+var winner = -1;
 
 io.on('connection', function(socket) {
     var address = socket.handshake.address;
@@ -64,19 +65,21 @@ io.on('connection', function(socket) {
     var update = function() {
         // Distribute the relevant game information to both players
         if(playerone)
-            io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
+            io.to(playerone.id).emit('update', new classes.clientWorld(board, true, winner, round % 2 == 0));
 
         if(playertwo)
-            io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
+            io.to(playertwo.id).emit('update', new classes.clientWorld(board, false, winner, round % 2 == 1));
     };
 
     var checkwin = function() {
         if(round > 2) {
             if(board.deck1.play.length == 0){
                 console.log("p2 wins");
+                winner = 1;
             }
             else if(board.deck2.play.length == 0) {
                 console.log("p1 wins");
+                winner = 0;
             }
         }
     };
@@ -86,11 +89,9 @@ io.on('connection', function(socket) {
         board.fortFall();
         if(socket.id == playerone.id) {
             board.deck1.playCard();
-            board.deck1.drawCard();
         }
         else {
             board.deck2.playCard();
-            board.deck2.drawCard();
         }
         round++;
         update();
