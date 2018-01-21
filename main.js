@@ -19,9 +19,12 @@ var board = new classes.board(p1cards, p2cards);
 // board setup end
 
 // set server stuff up
-app.use(express.static(__dirname + '/node_modules'));  
-app.get('/', function(req, res,next) {
+app.use(express.static(__dirname + '/public'));
+app.get('/', function(req, res, next) {
     res.sendFile(__dirname + '/index.html');
+});
+app.get('/img', function(req, res, next) {
+    res.sendFile(__dirname + '/public/' + req.query.filename);
 });
 
 var playerone = null;
