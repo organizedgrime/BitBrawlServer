@@ -8,9 +8,28 @@ var io = require('socket.io')(server);
 //region board setup start
 var cards = [];
 var cardnames = ['carp', 'dragon', 'eagle', 'earthworm', 'electriceel', 'halpt', 'hippo', 'jelly', 'mouse', 'octo', 'rhino', 'sparrow', 'tiger', 'tortoise', 'wasp'];
+var cardtypes = [
+    classes.type[0],
+    classes.type[2],
+    classes.type[3],
+    classes.type[1],
+    classes.type[0],
+    classes.type[2],
+    classes.type[0],
+    classes.type[0],
+    classes.type[1],
+    classes.type[0],
+    classes.type[1],
+    classes.type[3],
+    classes.type[2],
+    classes.type[2],
+    classes.type[3]
+];
+//['water', 'earth', 'fire', 'air']
 var decksize = 10;
 for(var i = 0; i < decksize*2; i++) {
-    cards.push(new classes.card(i, cardnames[Math.round(Math.random() * (cardnames.length-1))], classes.type[1], 1, 5, classes.rarity[0]));
+    var index = Math.round(Math.random() * (cardnames.length-1));
+    cards.push(new classes.card(i, cardnames[index], cardtypes[index], 1, 5, classes.rarity[0]));
 }
 var p1cards = new classes.deck(cards.slice(0, cards.length/2)), 
     p2cards = new classes.deck(cards.slice(cards.length/2, cards.length));
