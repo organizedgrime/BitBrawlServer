@@ -49,9 +49,6 @@ module.exports = {
 			this.playCard = function(card) {
 				// Play the card
 				this.play = this.play.concat(this.hand.splice(this.hand.indexOf(card), 1));
-
-				// Draw another card
-				this.hand = this.hand.concat(this.stash.splice(Math.round(Math.random() * this.stash.length), 1));
 			};
 
 			this.defendCard = function(attacker, defender) {

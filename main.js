@@ -9,7 +9,7 @@ var io = require('socket.io')(server);
 var cards = [];
 var copycard = new classes.card(0, 'inert aluminum cube', classes.type[1], 0.5, 5, classes.rarity[6]);
 var decksize = 10;
-for(var i = 0; i < decksize; i++) {
+for(var i = 0; i < decksize*2; i++) {
     cards.push(copycard);
     copycard = copycard.copy();
 }
@@ -62,17 +62,12 @@ io.on('connection', function(socket) {
     }
 
     var update = function() {
+        // Distribute the relevant game information to both players
         if(playerone)
             io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
 
         if(playertwo)
             io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
-    };
-
-    var turn = function() {
-        round++;
-        board.fortFall();
-        update();
     };
 
     var checkwin = function() {
@@ -88,13 +83,17 @@ io.on('connection', function(socket) {
 
     socket.on('update', update);
     socket.on('playcard', function(card) {
+        board.fortFall();
         if(socket.id == playerone.id) {
             board.deck1.playCard();
+            board.deck1.drawCard();
         }
         else {
             board.deck2.playCard();
+            board.deck2.drawCard();
         }
-        turn();
+        round++;
+        update();
     });
 
     socket.on('attackcard', function(attacker, defender) {
@@ -104,7 +103,9 @@ io.on('connection', function(socket) {
         else {
             board.deck1.defendCard(attacker, defender);
         }
-        turn();
+        board.fortFall();
+        round++;
+        update();
     });
 });
 
