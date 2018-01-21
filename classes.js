@@ -51,7 +51,18 @@ module.exports = {
 			};
 
 			this.defendCard = function(attacker, defender) {
-				this.play[this.play.indexOf(defender)].fortitude -= attacker.attack;
+				console.log("attacker: " + attacker.id);
+				console.log("defender: " + defender.id);
+				console.log(this.play);
+
+				for(var i = 0; i < this.play.length; i++) {
+					if(this.play[i].id == defender.id) {
+						this.play[i].fortitude -= attacker.attack;
+						console.log('whatssss gooood yo');
+					}
+				}
+
+				//this.play[this.play.indexOf(defender)].fortitude -= attacker.attack;
 			};
 
 			// Fill the users hand for the start of the game

@@ -28,34 +28,42 @@ var playertwo = null;
 
 io.on('connection', function(socket) {
     var address = socket.handshake.address;
-    console.log('<socket joined at ' + address + '>');
+    //console.log('<socket joined at ' + address + '>');
 
     // Establish players based on IP.
     if(!playerone) {
         // It's player one logging on for the first time.
+        console.log('playerone joined for the first time');
         playerone = {ip: address, id: socket.id};
     }
     else if(!playertwo) {
         // It's player two logging on for the first time.
+        console.log('playertwo joined for the first time');
         playertwo = {ip: address, id: socket.id};
     }
     else {
         if(playerone.ip == address) {
             // It's player one logging on again.
             playerone.id = socket.id;
+            console.log('playerone rejoined');
         }
         else if(playertwo.ip == address) {
             // It's player two logging on again.
             playertwo.id = socket.id;
+            console.log('playertwo rejoined');
         }
         else {
             // User is not part of the two IPs already saved.
+            console.log('REJECTED');
         }
     }
 
     var update = function(data) {
-        io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
-        io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
+        if(playerone)
+            io.to(playerone.id).emit('update', new classes.clientWorld(board, true));
+
+        if(playertwo)
+            io.to(playertwo.id).emit('update', new classes.clientWorld(board, false));
     };
 
     socket.on('update', update);
